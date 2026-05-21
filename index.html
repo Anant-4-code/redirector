@@ -1,32 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>📞</title>
-<style>
-  body{margin:0;background:#0a0a0f;}
-</style>
+  <meta charset="UTF-8"/>
+  <title>Calling...</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0f;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      color: #00e676;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
+  <div id="status">Initiating call...</div>
 <script>
-(function() {
   const params = new URLSearchParams(window.location.search);
-  const number = params.get('number');
+  let number = params.get('number') || '';
+  number = number.replace(/\s+/g, '').replace(/[^0-9+]/g, '');
 
-  if (number) {
-    const cleaned = number.toString().trim().replace(/[\s\-().]/g, '');
-
-    // Fire the dial protocol immediately
+  if (!number) {
+    document.getElementById('status').innerHTML = 'No number provided.';
+  } else {
+    document.getElementById('status').innerHTML = 'Calling ' + number + '...';
+    // Use standard tel: protocol for cross-platform and Phone Link support
     const a = document.createElement('a');
-    a.href = 'ms-phone-new-call:?PhoneNumber=' + encodeURIComponent(cleaned);
+    a.href = 'tel:' + number;
+    a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
-
-    // Close the tab instantly after
-    setTimeout(() => window.close(), 100);
+    
+    // Auto close tab after delay
+    setTimeout(() => {
+        window.close();
+        document.getElementById('status').innerHTML = 'You can close this tab now.';
+    }, 2000);
   }
-})();
 </script>
 </body>
 </html>
